@@ -20,6 +20,7 @@ import static com.cedarpolicy.CedarJson.objectReader;
 import static com.cedarpolicy.CedarJson.objectWriter;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import com.cedarpolicy.model.AuthorizationResponse;
 import com.cedarpolicy.model.ValidationRequest;
@@ -32,6 +33,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,19 +75,22 @@ public final class BasicAuthorizationEngine implements AuthorizationEngine {
             }
             final String fullRequest = objectWriter().writeValueAsString(request);
 
+            LOG.debug(responseClass.toString());
             LOG.debug(
                     "Making a request ({}) of length {} through the JNI interface:",
                     operation,
                     fullRequest.length());
-            LOG.trace("The request:\n{}", fullRequest);
+            LOG.debug("The request:\n{}", fullRequest);
 
             final String response = callCedarJNI(operation, fullRequest);
-            LOG.trace("Received response of length {}:\n{}", response.length(), response);
+            LOG.debug("Received response of length {}:\n{}", response.length(), response);
 
             final JsonNode responseNode = objectReader().readTree(response);
             boolean wasSuccessful = responseNode.path("success").asBoolean(false);
             if (wasSuccessful) {
                 final String resultJson = responseNode.path("result").textValue();
+                LOG.debug(MessageFormat.format("BasicAuthorizationEngine::call() resultJson: {0}", resultJson));
+//                return new ModelMapper().map(objectReader().readValue(resultJson), responseClass);
                 return objectReader().readValue(resultJson, responseClass);
             } else {
                 final ErrorResponse error = objectReader().forType(ErrorResponse.class).readValue(responseNode);
