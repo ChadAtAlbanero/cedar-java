@@ -54,10 +54,10 @@ public final class AuthorizationResponse {
          * Set of policyID's that caused the decision. For example, when a policy evaluates to Deny,
          * all deny policies that evaluated to True will appear in Reasons.
          */
-        private ImmutableSet<String> reason;
+        private Set<String> reason;
 
         /** Set of errors and warnings returned by Cedar. */
-        private ImmutableList<String> errors;
+        private List<String> errors;
 
         /**
          * Read the reasons and errors from a JSON object.
@@ -69,8 +69,8 @@ public final class AuthorizationResponse {
         public Diagnostics(
                 @JsonProperty("reason") Set<String> reason,
                 @JsonProperty("errors") List<String> errors) {
-            this.errors = ImmutableList.copyOf(errors);
-            this.reason = ImmutableSet.copyOf(reason);
+            this.errors = errors;
+            this.reason = reason;
         }
     }
 

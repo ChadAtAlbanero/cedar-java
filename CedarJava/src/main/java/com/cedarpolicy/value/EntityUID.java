@@ -94,7 +94,7 @@ public class EntityUID extends Value {
      *     <p>Note, we limit euids to 1024 chars.
      */
     public EntityUID(String type, String id) throws IllegalArgumentException {
-        String euid = type + "::\""+id+"\"";
+        String euid = type + "::\"" + id + "\"";
         if (!EUIDValidator.validEntityUID(euid)) {
             throw new IllegalArgumentException("Input string is not a valid EntityUID " + euid);
         }
